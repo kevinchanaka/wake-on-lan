@@ -9,7 +9,9 @@ jobs:
           version: 19.03.13
       - run:
           name: Creating buildx environment
-          command: docker buildx create --use
+          command: | 
+            docker context create builder
+            docker buildx create builder --use
       - run:
           name: Building and pushing images 
           command: |
