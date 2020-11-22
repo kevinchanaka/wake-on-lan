@@ -15,7 +15,7 @@ jobs:
       - run:
           name: Building and pushing images 
           command: |
-            echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+            docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD
             docker buildx build --push \
               --platform linux/arm/v7,linux/arm64/v8,linux/amd64
               --tag $DOCKER_HUB_USERNAME/wake-on-lan:latest .
