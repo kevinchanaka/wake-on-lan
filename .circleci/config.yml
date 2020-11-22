@@ -8,13 +8,13 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
       - run:
+          name: Authenticating to Docker hub
+          command: echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+      - run:
           name: Creating buildx environment
           command: | 
             docker context create builder
             docker buildx create builder --use
-      - run:
-          name: Authenticating to Docker hub
-          command: echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
       - run:
           name: Building and pushing images 
           command: |
