@@ -2,11 +2,18 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: jdrouet/docker-with-buildx:stable
+      - image: cimg/base:stable
     steps:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+      - run:
+          name: Installing buildx
+          command: |
+            export DOCKER_BUILDKIT=1
+            docker build --platform=local -o . git://github.com/docker/buildx
+            mkdir -p ~/.docker/cli-plugins
+            mv buildx ~/.docker/cli-plugins/docker-buildx
       - run:
           name: Authenticating to Docker hub
           command: echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
