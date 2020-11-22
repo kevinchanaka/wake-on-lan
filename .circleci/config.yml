@@ -1,0 +1,19 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: jdrouet/docker-with-buildx:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: Creating buildx environment
+          command: docker buildx create --use
+      - run:
+          name: Building and pushing images 
+          command: |
+            echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+            docker buildx build --push \
+              --platform linux/arm/v7,linux/arm64/v8,linux/amd64
+              --tag $DOCKER_HUB_USERNAME/wake-on-lan:latest .
