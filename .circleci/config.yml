@@ -1,22 +1,21 @@
 version: 2.1
+
+workflows:
+  version: 2
+  project_cicd:
+    jobs:
+      - build:
+          context:
+            - docker-hub
+
 jobs:
   build:
     docker:
-      - image: cimg/base:stable
+      - image: jdrouet/docker-with-buildx:stable
     steps:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
-      - run:
-          name: Installing buildx
-          command: |
-            export DOCKER_BUILDKIT=1
-            docker build --platform=local -o . git://github.com/docker/buildx
-            mkdir -p ~/.docker/cli-plugins
-            mv buildx ~/.docker/cli-plugins/docker-buildx
-      - run:
-          name: Authenticating to Docker hub
-          command: echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
       - run:
           name: Creating buildx environment
           command: | 
@@ -25,6 +24,7 @@ jobs:
       - run:
           name: Building and pushing images 
           command: |
+            echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
             docker buildx build --push \
               --platform linux/arm/v7,linux/arm64/v8,linux/amd64
               --tag $DOCKER_HUB_USERNAME/wake-on-lan:latest .
